@@ -3,10 +3,6 @@
 #include <functional>
 #include <vector>
 
-#if defined(_WIN32) || defined(__APPLE__)
-#define USE_NFD
-#endif
-
 #ifdef USE_NFD
 #include <atomic>
 #include <thread>

@@ -78,6 +78,10 @@ else()
   set(DEPENDENCIES_DEFINES "")
 endif()
 
+if (WIN32 OR APPLE)
+  set(USE_NFD TRUE CACHE STRING "Enable NFD")
+endif()
+
 TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
 
 if (IS_BIG_ENDIAN)
@@ -611,17 +615,20 @@ src/gui/volMeter.cpp
 src/gui/gui.cpp
 )
 
-if (WIN32 OR APPLE)
-  list(APPEND GUI_SOURCES extern/nfd-modified/src/nfd_common.cpp)
-endif()
-
-if (WIN32)
-  list(APPEND GUI_SOURCES extern/nfd-modified/src/nfd_win.cpp)
-endif()
-
 if (APPLE)
   list(APPEND GUI_SOURCES src/gui/macstuff.m)
-  list(APPEND GUI_SOURCES extern/nfd-modified/src/nfd_cocoa.mm)
+endif()
+
+if (USE_NFD)
+  list(APPEND GUI_SOURCES extern/nfd-modified/src/nfd_common.cpp)
+  
+  if (WIN32)
+    list(APPEND GUI_SOURCES extern/nfd-modified/src/nfd_win.cpp)
+  endif()
+
+  if (APPLE)
+    list(APPEND GUI_SOURCES extern/nfd-modified/src/nfd_cocoa.mm)
+  endif()
 endif()
 
 if (NOT WIN32 AND NOT APPLE)
@@ -681,7 +688,7 @@ if (BUILD_GUI)
     extern/IconFontCppHeaders
     extern/igfd
   )
-  if (WIN32 OR APPLE)
+  if (USE_NFD)
     list(APPEND DEPENDENCIES_INCLUDE_DIRS
       extern/nfd-modified/src/include
     )
@@ -748,6 +755,9 @@ else()
 endif()
 
 target_include_directories(furnace SYSTEM PRIVATE ${DEPENDENCIES_INCLUDE_DIRS})
+if (USE_NFD)
+  target_compile_definitions(furnace PRIVATE USE_NFD)
+endif()
 target_compile_definitions(furnace PRIVATE ${DEPENDENCIES_DEFINES} IMGUI_USER_CONFIG="imconfig_fur.h")
 target_compile_options(furnace PRIVATE ${DEPENDENCIES_COMPILE_OPTIONS})
 target_link_libraries(furnace PRIVATE ${DEPENDENCIES_LIBRARIES})
