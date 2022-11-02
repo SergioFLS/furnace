@@ -25,6 +25,8 @@
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_sdlrenderer.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <SDL.h>
 #include <fftw3.h>
 #include <deque>
@@ -35,7 +37,6 @@
 #include <mutex>
 #include <tuple>
 #include <vector>
-
 #include "fileDialog.h"
 
 #define rightClickable if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) ImGui::SetKeyboardFocusHere(-1);
